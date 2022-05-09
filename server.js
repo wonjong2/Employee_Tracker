@@ -1,8 +1,9 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const inquirer = require('inquirer');
 const table = require('console.table');
+let db = {};
 
-const db = mysql.createConnection(
+mysql.createConnection(
     {
         host: 'localhost',
         user: 'root',
@@ -10,10 +11,11 @@ const db = mysql.createConnection(
         database: 'employee_db'
     }
 )
-
-if(!db) {
-    console.log('Connected to the employee_db database');
-}
+.then((conn) => {
+    db = conn;
+    main();
+})
+.catch(err => console.error(err));
 
 const options = [
     'View All Departments',
@@ -25,40 +27,58 @@ const options = [
     'Update An Employee Role'
 ];
 
-inquirer.prompt(
-    [
-        {
-            type: 'rawlist',
-            name: 'option',
-            message: "What would you like to do?",
-            choices: options,
-            pageSize: 7
+function main() {
+    inquirer.prompt(
+        [
+            {
+                type: 'rawlist',
+                name: 'option',
+                message: "What would you like to do?",
+                choices: options,
+                pageSize: 7
+            }
+        ]
+    )
+    .then(({option}) => {
+        switch(options.indexOf(option)) {
+            case 0:
+                viewData('department');
+                break;
+            case 1:
+                viewData('role');
+                break;
+            case 2:
+                viewData('employee');
+                break;
+            case 3:
+                // function1();
+                break;
+            case 4:
+                // function1();
+                break;
+            case 5:
+                // function1();
+                break;
+            case 6:
+                // function1();
+                break;
         }
-    ]
-)
-.then(({option}) => {
-    switch(options.indexOf(option)) {
-        case 0:
-            // function1();
-            break;
-        case 1:
-            // function1();
-            break;
-        case 2:
-            // function1();
-            break;
-        case 3:
-            // function1();
-            break;
-        case 4:
-            // function1();
-            break;
-        case 5:
-            // function1();
-            break;
-        case 6:
-            // function1();
-            break;
+    })
+    .catch(err => console.error(err));
+}
+
+const viewData = async (whichData) => {
+    let data = {};
+
+    try {
+        console.log(whichData);
+        data = await db.query(`SELECT * FROM ${whichData}`);
     }
-})
-.catch(err => console.error(err));
+    catch {
+        console.error(`Error in Reading DB`);
+        return;
+    }
+
+    console.table(data[0]);
+    main();
+}
