@@ -61,7 +61,7 @@ function main() {
                     addEmployee();
                     break;
                 case 6:
-                    // function1();
+                    updateEmployeeRole();
                     break;
             }
         })
@@ -232,9 +232,50 @@ const addEmployee = async () => {
             ]
         )
         .then(async ({first_name, last_name, role_id, manager_id}) => {
-            console.log(first_name, last_name, role_id, manager_id);
             const result = await db.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('${first_name}', '${last_name}', ${role_id}, ${manager_id})`);
             console.log(`Added ${first_name} ${last_name} to the database`);
+            main();
+        })
+        .catch((err) => console.log(err));
+}
+
+const updateEmployeeRole = async () => {
+    let roleList = [];
+    let employeeList = [];
+    try {
+        roleList = await db.query(`SELECT id AS value, title AS name FROM role`);
+        roleList = roleList[0];
+        employeeList = await db.query(`SELECT id AS value, first_name AS name, last_name FROM employee`);
+        employeeList = employeeList[0];
+        employeeList.forEach((employee) => employee.name = employee.name + ' ' + employee.last_name);
+    }
+    catch {
+        console.error(`Error in Reading DB`);
+        return;
+    }
+
+    inquirer
+        .prompt(
+            [
+                {
+                    type: 'list',
+                    name: 'id',
+                    message: `Which employee's role do you want to update?`,
+                    choices: employeeList,
+                    pageSize: employeeList.length,
+                },
+                {
+                    type: 'list',
+                    name: 'role_id',
+                    message: `Which role do you want to assign the selected employee?`,
+                    choices: roleList,
+                    pageSize: roleList.length,
+                },
+            ]
+        )
+        .then(async ({id, role_id}) => {
+            const result = await db.query(`UPDATE employee SET role_id = ? WHERE id = ?`, [role_id, id]);
+            console.log(`Updated employee's role`);
             main();
         })
         .catch((err) => console.log(err));
