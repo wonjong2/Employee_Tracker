@@ -42,13 +42,13 @@ function main() {
     .then(({option}) => {
         switch(options.indexOf(option)) {
             case 0:
-                viewData('department');
+                viewDepartment();
                 break;
             case 1:
-                viewData('role');
+                viewRole();
                 break;
             case 2:
-                viewData('employee');
+                viewEmployee();
                 break;
             case 3:
                 // function1();
@@ -67,18 +67,76 @@ function main() {
     .catch(err => console.error(err));
 }
 
-const viewData = async (whichData) => {
+const viewDepartment = async () => {
     let data = {};
-
     try {
-        console.log(whichData);
-        data = await db.query(`SELECT * FROM ${whichData}`);
+        data = await db.query(`SELECT * FROM department`);
     }
     catch {
         console.error(`Error in Reading DB`);
         return;
     }
-
     console.table(data[0]);
     main();
+}
+
+const viewRole = async () => {
+    let data = {};
+    try {
+        data = await db.query(
+        `SELECT role.id, role.title, department.name AS department, role.salary
+        FROM role
+        JOIN department ON department.id = role.department_id`
+        );
+    }
+    catch {
+        console.error(`Error in Reading DB`);
+        return;
+    }
+    console.table(data[0]);
+    main();
+}
+
+const viewEmployee = async () => {
+    let data = {};
+    try {
+        data = await db.query(
+        `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id AS manager
+        FROM employee
+        JOIN role ON employee.role_id = role.id
+        JOIN department ON role.department_id = department.id`
+        );
+    }
+    catch {
+        console.error(`Error in Reading DB`);
+        return;
+    }
+    console.log(data[0]);
+    
+    let managers = {};
+    let managerData = [];
+    data[0].forEach(async (employee) => {
+        if(!employee.manager) {
+            return;
+        }
+
+        if(managers[employee.manager]) {
+            employee.manager = managers[employee.namager];
+            return;
+        }
+
+        try {
+            managerData = await db.query('SELECT first_name, last_name FROM employee WHERE id=?', employee.manager);
+        }
+        catch {
+            console.error(`Error in Reading DB`);
+            return;
+        }
+        const {first_name, last_name} = managerData[0][0];
+        managers[employee.manager] = first_name + ' ' + last_name;
+        employee.manager = first_name + ' ' + last_name;
+
+        console.table(data[0]);
+        main();
+    });
 }
