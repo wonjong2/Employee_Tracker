@@ -51,7 +51,7 @@ function main() {
                 viewEmployee();
                 break;
             case 3:
-                // function1();
+                addDepartment();
                 break;
             case 4:
                 // function1();
@@ -124,3 +124,21 @@ const viewEmployee = async () => {
     console.table(data[0]);
     main();
 }
+
+const addDepartment = async() => {
+    inquirer.prompt(
+        [
+            {
+                type: 'input',
+                name: 'name',
+                message: 'What is the name of the department?',
+            }
+        ]
+    )
+    .then(async ({name}) => {
+        const result = await db.query(`INSERT INTO department(name) VALUES('${name}')`);
+        console.log(`Added ${name} to the database`);
+        main();
+    })
+    .catch();
+};
