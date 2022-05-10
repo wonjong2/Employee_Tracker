@@ -111,32 +111,16 @@ const viewEmployee = async () => {
         console.error(`Error in Reading DB`);
         return;
     }
-    console.log(data[0]);
     
-    let managers = {};
-    let managerData = [];
-    data[0].forEach(async (employee) => {
+    console.log(data[0]);
+    data[0].forEach((employee) => {
         if(!employee.manager) {
             return;
         }
-
-        if(managers[employee.manager]) {
-            employee.manager = managers[employee.namager];
-            return;
-        }
-
-        try {
-            managerData = await db.query('SELECT first_name, last_name FROM employee WHERE id=?', employee.manager);
-        }
-        catch {
-            console.error(`Error in Reading DB`);
-            return;
-        }
-        const {first_name, last_name} = managerData[0][0];
-        managers[employee.manager] = first_name + ' ' + last_name;
-        employee.manager = first_name + ' ' + last_name;
-
-        console.table(data[0]);
-        main();
+        employee.manager = data[0][employee.manager-1].first_name + ' ' + data[0][employee.manager-1].last_name;
+        return;
     });
+
+    console.table(data[0]);
+    main();
 }
