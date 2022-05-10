@@ -17,22 +17,33 @@ mysql.createConnection(
 })
 .catch(err => console.error(err));
 
-const options = [
-    'View All Departments',
-    'View All Roles',
-    'View All Employees',
-    'Add A Department',
-    'Add A Role',
-    'Add An Employee',
-    'Update An Employee Role'
-];
-
 function main() {
+    const options = [
+        {value:0, name:'View All Departments'},
+        {value:1, name:'View All Roles'},
+        {value:2, name:'View All Employees'},
+        {value:3, name:'Add A Department'},
+        {value:4, name:'Add A Role'},
+        {value:5, name:'Add An Employee'},
+        {value:6, name:'Update An Employee Role'}
+    ];
+
+    // Functions to be executed by user's choice
+    const functions = [
+        viewDepartment, 
+        viewRole,
+        viewEmployee,
+        addDepartment,
+        addRole,
+        addEmployee,
+        updateEmployeeRole
+    ];
+
     inquirer
         .prompt(
             [
                 {
-                    type: 'rawlist',
+                    type: 'list',
                     name: 'option',
                     message: "What would you like to do?",
                     choices: options,
@@ -40,37 +51,14 @@ function main() {
                 }
             ]
         )
-        .then(({option}) => {
-            switch(options.indexOf(option)) {
-                case 0:
-                    viewDepartment();
-                    break;
-                case 1:
-                    viewRole();
-                    break;
-                case 2:
-                    viewEmployee();
-                    break;
-                case 3:
-                    addDepartment();
-                    break;
-                case 4:
-                    addRole();
-                    break;
-                case 5:
-                    addEmployee();
-                    break;
-                case 6:
-                    updateEmployeeRole();
-                    break;
-            }
-        })
+        .then(({option}) => functions[option]())
         .catch(err => console.error(err));
 }
 
 const viewDepartment = async () => {
     let data = {};
     try {
+        // Read all date from the department table
         data = await db.query(`SELECT * FROM department`);
     }
     catch {
@@ -84,6 +72,7 @@ const viewDepartment = async () => {
 const viewRole = async () => {
     let data = {};
     try {
+        // Read data from the role table and Join with the department table to get department.name from it
         data = await db.query(
         `SELECT role.id, role.title, department.name AS department, role.salary
         FROM role
@@ -101,6 +90,7 @@ const viewRole = async () => {
 const viewEmployee = async () => {
     let data = {};
     try {
+        // Read data from the employee table and join with the role/department tables to get role.title, department.name, and role.salary from them
         data = await db.query(
         `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id AS manager
         FROM employee
@@ -114,6 +104,8 @@ const viewEmployee = async () => {
     }
     
     console.log(data[0]);
+
+    // Put the manager's name instead of mananger_id into employee.manager to display it
     data[0].forEach((employee) => {
         if(!employee.manager) {
             return;
@@ -148,6 +140,7 @@ const addDepartment = async() => {
 const addRole = async() => {
     let deptList = [];
     try {
+        // Create the deptList with data from the department table, it will be used as a 'choices' in inquirer.prompt
         deptList = await db.query(`SELECT id AS value, name FROM department`);
         deptList = deptList[0];
     }
@@ -190,11 +183,14 @@ const addEmployee = async () => {
     let roleList = [];
     let employeeList = [];
     try {
+        // Create the roleList with data from the role table, it will be used as a 'choices' in inquirer.prompt
         roleList = await db.query(`SELECT id AS value, title AS name FROM role`);
         roleList = roleList[0];
+        // Create the employeeList with data from the employee table, it will be used as a 'choices' in inquirer.prompt
         employeeList = await db.query(`SELECT id AS value, first_name AS name, last_name FROM employee`);
         employeeList = employeeList[0];
         employeeList.forEach((employee) => employee.name = employee.name + ' ' + employee.last_name);
+        // Add 'None' option to the top of the employeeList
         employeeList.unshift({value:null, name: 'None'});
     }
     catch {
@@ -243,8 +239,10 @@ const updateEmployeeRole = async () => {
     let roleList = [];
     let employeeList = [];
     try {
+        // Create the roleList with data from the role table, it will be used as a 'choices' in inquirer.prompt
         roleList = await db.query(`SELECT id AS value, title AS name FROM role`);
         roleList = roleList[0];
+        // Create the employeeList with data from the employee table, it will be used as a 'choices' in inquirer.prompt
         employeeList = await db.query(`SELECT id AS value, first_name AS name, last_name FROM employee`);
         employeeList = employeeList[0];
         employeeList.forEach((employee) => employee.name = employee.name + ' ' + employee.last_name);
