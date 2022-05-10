@@ -54,7 +54,7 @@ function main() {
                 addDepartment();
                 break;
             case 4:
-                // function1();
+                addRole();
                 break;
             case 5:
                 // function1();
@@ -140,5 +140,54 @@ const addDepartment = async() => {
         console.log(`Added ${name} to the database`);
         main();
     })
-    .catch();
+    .catch((err) => console.log(err));
 };
+
+const addRole = async() => {
+    let deptList = [];
+    try {
+        deptList = await db.query(`SELECT * FROM department`);
+        deptList = deptList[0];
+        console.log(deptList);
+    }
+    catch {
+        console.error(`Error in Reading DB`);
+        return;
+    }
+
+    inquirer.prompt(
+        [
+            {
+                type: 'input',
+                name: 'title',
+                message: 'What is the name of the role?',
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: 'What is the salary of the role?',
+            },
+            {
+                type: 'list',
+                name: 'department',
+                message: 'Which department does the role belong to?',
+                choices: deptList
+            }
+        ]
+    )
+    .then(async ({title, salary, department}) => {
+        console.log(title, salary, department);
+        const deptId = deptList[deptList.findIndex(findDeptId)].id;
+        function findDeptId(row) {
+            return row.name === department;
+        }
+        const result = await db.query(`INSERT INTO role(title, salary, department_id) VALUES('${title}', ${salary}, ${deptId})`);
+        console.log(`Added ${title} to the database`);
+        main();
+    })
+    .catch((err) => console.log(err));
+};
+
+// function findDeptId(row, name) {
+//     return row.name === name;
+// }
