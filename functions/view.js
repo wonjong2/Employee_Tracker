@@ -1,7 +1,5 @@
 const mysql = require('mysql2/promise');
-// const inquirer = require('inquirer');
 const table = require('console.table');
-// const {main} = require('./main');
 
 const viewData = async (db, select) => {
     const queries = [
@@ -39,6 +37,5 @@ const viewData = async (db, select) => {
         return;
     }
 }
-
 
 module.exports = {viewData};
