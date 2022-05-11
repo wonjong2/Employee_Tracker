@@ -30,7 +30,6 @@ const viewData = async (db, select) => {
             });
         }
         console.table(data[0]);
-        // main();
     }
     catch {
         console.error(`Error in Reading DB`);
@@ -38,4 +37,28 @@ const viewData = async (db, select) => {
     }
 }
 
-module.exports = {viewData};
+const viewEmployeesByManager = async (db) => {
+    // let managerList = [];
+    try {
+        let employeeList = await db.query(`SELECT id, first_name, last_name FROM employee`);
+        //employeeList = employeeList[0];
+        let sortedEmployeeList = await db.query(`SELECT manager_id AS manager, id, first_name, last_name FROM employee ORDER BY manager`);
+        sortedEmployeeList = sortedEmployeeList[0];
+
+        sortedEmployeeList.forEach((employee) => {
+            if(!employee.manager) {
+                return;
+            }
+            employee.manager = employeeList[0][employee.manager-1].first_name + ' ' + employeeList[0][employee.manager-1].last_name;
+            return;
+        });
+
+        console.table(sortedEmployeeList);
+    }
+    catch {
+        console.error(`Error in Reading DB`);
+        return;
+    }
+}
+
+module.exports = {viewData, viewEmployeesByManager};

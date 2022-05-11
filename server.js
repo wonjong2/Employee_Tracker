@@ -1,7 +1,7 @@
 const mysql = require('mysql2/promise');
 const inquirer = require('inquirer');
 const table = require('console.table');
-const {viewData} = require('./functions/view')
+const {viewData, viewEmployeesByManager} = require('./functions/view')
 const {addDepartment, addRole, addEmployee} = require('./functions/add');
 const {updateEmployeeRole, updateEmployeeManagers} = require('./functions/update');
 
@@ -31,6 +31,7 @@ function main() {
         {value:5, name:'Add An Employee'},
         {value:6, name:'Update An Employee Role'},
         {value:7, name:'Update An Employee Manager'},
+        {value:8, name:'View Employees by Manager'},
     ];
 
     // Functions to be executed by user's choice
@@ -43,6 +44,7 @@ function main() {
         addEmployee,
         updateEmployeeRole,
         updateEmployeeManagers,
+        viewEmployeesByManager,
     ];
 
     inquirer

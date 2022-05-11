@@ -48,9 +48,8 @@ const updateEmployeeManagers = async (db) => {
         employeeList = await db.query(`SELECT id AS value, first_name AS name, last_name FROM employee`);
         employeeList = employeeList[0];
         employeeList.forEach((employee) => employee.name = employee.name + ' ' + employee.last_name);
+        // Create the managerList with data from the employee table, it will be used as a 'choices' in inquirer.prompt
         managerList = [{value:null, name:'None'}].concat(employeeList);
-
-        console.log(managerList);
 
         const {id, manager_id} = await inquirer.prompt([
             {
