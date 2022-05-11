@@ -30,9 +30,9 @@ function main() {
 
     // Functions to be executed by user's choice
     const functions = [
-        viewDepartment, 
-        viewRole,
-        viewEmployee,
+        viewData, 
+        viewData,
+        viewData,
         addDepartment,
         addRole,
         addEmployee,
@@ -51,71 +51,45 @@ function main() {
                 }
             ]
         )
-        .then(({option}) => functions[option]())
+        .then(({option}) => functions[option](option))
         .catch(err => console.error(err));
 }
 
-const viewDepartment = async () => {
-    let data = {};
-    try {
-        // Read all date from the department table
-        data = await db.query(`SELECT * FROM department`);
-    }
-    catch {
-        console.error(`Error in Reading DB`);
-        return;
-    }
-    console.table(data[0]);
-    main();
-}
-
-const viewRole = async () => {
-    let data = {};
-    try {
-        // Read data from the role table and Join with the department table to get department.name from it
-        data = await db.query(
+const viewData = async (select) => {
+    const queries = [
+        `SELECT * 
+        FROM department`,
         `SELECT role.id, role.title, department.name AS department, role.salary
         FROM role
-        JOIN department ON department.id = role.department_id`
-        );
-    }
-    catch {
-        console.error(`Error in Reading DB`);
-        return;
-    }
-    console.table(data[0]);
-    main();
-}
-
-const viewEmployee = async () => {
-    let data = {};
-    try {
-        // Read data from the employee table and join with the role/department tables to get role.title, department.name, and role.salary from them
-        data = await db.query(
+        JOIN department ON department.id = role.department_id`,
         `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id AS manager
         FROM employee
         JOIN role ON employee.role_id = role.id
         JOIN department ON role.department_id = department.id`
-        );
+    ];
+
+    let data = {};
+    try {
+        // Read all date from the department table
+        data = await db.query(queries[select]);
+
+        // Put the manager's name instead of mananger_id into employee.manager to display it
+        if(select === 2){
+            data[0].forEach((employee) => {
+                if(!employee.manager) {
+                    return;
+                }
+                employee.manager = data[0][employee.manager-1].first_name + ' ' + data[0][employee.manager-1].last_name;
+                return;
+            });
+        }
+        console.table(data[0]);
+        main();
     }
     catch {
         console.error(`Error in Reading DB`);
         return;
     }
-    
-    console.log(data[0]);
-
-    // Put the manager's name instead of mananger_id into employee.manager to display it
-    data[0].forEach((employee) => {
-        if(!employee.manager) {
-            return;
-        }
-        employee.manager = data[0][employee.manager-1].first_name + ' ' + data[0][employee.manager-1].last_name;
-        return;
-    });
-
-    console.table(data[0]);
-    main();
 }
 
 const addDepartment = async() => {
