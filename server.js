@@ -1,6 +1,8 @@
 const mysql = require('mysql2/promise');
 const inquirer = require('inquirer');
 const table = require('console.table');
+const {viewData} = require('./helpers/view')
+// const {main} = require('./helpers/main');
 let db = {};
 
 mysql.createConnection(
@@ -51,46 +53,47 @@ function main() {
                 }
             ]
         )
-        .then(({option}) => functions[option](option))
+        .then(({option}) => functions[option](db, option))
+        .then(() => main())
         .catch(err => console.error(err));
 }
 
-const viewData = async (select) => {
-    const queries = [
-        `SELECT * 
-        FROM department`,
-        `SELECT role.id, role.title, department.name AS department, role.salary
-        FROM role
-        JOIN department ON department.id = role.department_id`,
-        `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id AS manager
-        FROM employee
-        JOIN role ON employee.role_id = role.id
-        JOIN department ON role.department_id = department.id`
-    ];
+// const viewData = async (select) => {
+//     const queries = [
+//         `SELECT * 
+//         FROM department`,
+//         `SELECT role.id, role.title, department.name AS department, role.salary
+//         FROM role
+//         JOIN department ON department.id = role.department_id`,
+//         `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id AS manager
+//         FROM employee
+//         JOIN role ON employee.role_id = role.id
+//         JOIN department ON role.department_id = department.id`
+//     ];
 
-    let data = {};
-    try {
-        // Read all date from the department table
-        data = await db.query(queries[select]);
+//     let data = {};
+//     try {
+//         // Read all date from the department table
+//         data = await db.query(queries[select]);
 
-        // Put the manager's name instead of mananger_id into employee.manager to display it
-        if(select === 2){
-            data[0].forEach((employee) => {
-                if(!employee.manager) {
-                    return;
-                }
-                employee.manager = data[0][employee.manager-1].first_name + ' ' + data[0][employee.manager-1].last_name;
-                return;
-            });
-        }
-        console.table(data[0]);
-        main();
-    }
-    catch {
-        console.error(`Error in Reading DB`);
-        return;
-    }
-}
+//         // Put the manager's name instead of mananger_id into employee.manager to display it
+//         if(select === 2){
+//             data[0].forEach((employee) => {
+//                 if(!employee.manager) {
+//                     return;
+//                 }
+//                 employee.manager = data[0][employee.manager-1].first_name + ' ' + data[0][employee.manager-1].last_name;
+//                 return;
+//             });
+//         }
+//         console.table(data[0]);
+//         main();
+//     }
+//     catch {
+//         console.error(`Error in Reading DB`);
+//         return;
+//     }
+// }
 
 const addDepartment = async() => {
     inquirer
@@ -252,3 +255,5 @@ const updateEmployeeRole = async () => {
         })
         .catch((err) => console.log(err));
 }
+
+module.exports = {main};
