@@ -40,4 +40,42 @@ const updateEmployeeRole = async (db) => {
     }
 }
 
-module.exports = {updateEmployeeRole};
+const updateEmployeeManagers = async (db) => {
+    let employeeList = [];
+    let managerList = [];
+    try {
+        // Create the employeeList with data from the employee table, it will be used as a 'choices' in inquirer.prompt
+        employeeList = await db.query(`SELECT id AS value, first_name AS name, last_name FROM employee`);
+        employeeList = employeeList[0];
+        employeeList.forEach((employee) => employee.name = employee.name + ' ' + employee.last_name);
+        managerList = [{value:null, name:'None'}].concat(employeeList);
+
+        console.log(managerList);
+
+        const {id, manager_id} = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'id',
+                message: `Which employee's manager do you want to update?`,
+                choices: employeeList,
+                pageSize: employeeList.length,
+            },
+            {
+                type: 'list',
+                name: 'manager_id',
+                message: `Who is the manager of the selected employee?`,
+                choices: managerList,
+                pageSize: managerList.length,
+            },
+        ]);
+
+        const result = await db.query(`UPDATE employee SET manager_id = ? WHERE id = ?`, [manager_id, id]);
+        console.log(`Updated employee's manager`);
+    }
+    catch {
+        console.error(`Error in Reading DB`);
+        return;
+    }
+}
+
+module.exports = {updateEmployeeRole, updateEmployeeManagers};
