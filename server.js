@@ -59,7 +59,9 @@ function main() {
                 }
             ]
         )
+        // All functions to get, add, update or delete data are async functions
         .then(({option}) => functions[option](db, option))
+        // So, Once execution of functions completed, main() called to show option menu to a user
         .then(() => main())
         .catch(err => console.error(err));
 }

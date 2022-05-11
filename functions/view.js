@@ -38,13 +38,13 @@ const viewData = async (db, select) => {
 }
 
 const viewEmployeesByManager = async (db) => {
-    // let managerList = [];
     try {
         let employeeList = await db.query(`SELECT id, first_name, last_name FROM employee`);
-        //employeeList = employeeList[0];
+        // Sort employee lists ordered by manager_id
         let sortedEmployeeList = await db.query(`SELECT manager_id AS manager, id, first_name, last_name FROM employee ORDER BY manager`);
         sortedEmployeeList = sortedEmployeeList[0];
 
+        // Replace manager_id with manager's name
         sortedEmployeeList.forEach((employee) => {
             if(!employee.manager) {
                 return;
