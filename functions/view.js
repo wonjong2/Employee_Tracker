@@ -20,22 +20,22 @@ const viewData = async (db, select) => {
         ORDER BY employee.id`
     };
 
-    let data = {};
+    // let data = {};
     try {
         // Read all date from the department table
-        data = await db.query(queries[select]);
+        let [data] = await db.query(queries[select]);
 
         // Put the manager's name instead of mananger_id into employee.manager to display it
         if(select === Views.EMPLOYEES){
-            data[0].forEach((employee) => {
+            data.forEach((employee) => {
                 if(!employee.manager) {
                     return;
                 }
-                employee.manager = data[0][employee.manager-1].first_name + ' ' + data[0][employee.manager-1].last_name;
-                return;
+                const manager = data[employee.manager-1];
+                employee.manager = `${manager.first_name} ${manager.last_name}`;
             });
         }
-        console.table(data[0]);
+        console.table(data);
     }
     catch {
         console.error(`Error in Reading DB`);
@@ -47,15 +47,15 @@ const viewEmployeesByManager = async (db) => {
     try {
         let employeeList = await db.query(`SELECT id, first_name, last_name FROM employee`);
         // Sort employee lists ordered by manager_id
-        let sortedEmployeeList = await db.query(`SELECT manager_id AS manager, id, first_name, last_name FROM employee ORDER BY manager`);
-        sortedEmployeeList = sortedEmployeeList[0];
+        let [sortedEmployeeList] = await db.query(`SELECT manager_id AS manager, id, first_name, last_name FROM employee ORDER BY manager`);
 
         // Replace manager_id with manager's name
         sortedEmployeeList.forEach((employee) => {
             if(!employee.manager) {
                 return;
             }
-            employee.manager = employeeList[0][employee.manager-1].first_name + ' ' + employeeList[0][employee.manager-1].last_name;
+            const manager = employeeList[employee.manager-1];
+            employee.manager = `${manager.first_name} ${manager.last_name}`;
             return;
         });
 
@@ -69,12 +69,11 @@ const viewEmployeesByManager = async (db) => {
 
 const viewEmployeesByDept = async (db) => {
     try {
-        let employeeList = await db.query(`SELECT department.name AS department, employee.id, employee.first_name, employee.last_name 
+        let [employeeList] = await db.query(`SELECT department.name AS department, employee.id, employee.first_name, employee.last_name 
         FROM employee
         JOIN role ON role.id = employee.role_id
         JOIN department ON department.id = role.department_id
         ORDER BY department`);
-        employeeList = employeeList[0];
 
         console.table(employeeList);
     }

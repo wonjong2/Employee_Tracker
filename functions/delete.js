@@ -15,8 +15,7 @@ const deleteData = async (db, select) => {
 
     try {
         // Create the deptList with data from the department table, it will be used as a 'choices' in inquirer.prompt
-        let data = await db.query(queries[select]);
-        data = data[0];
+        let [data] = await db.query(queries[select]);
 
         if(select === Delete.EMPLOYEE){
             data.forEach((employee) => {
@@ -34,7 +33,6 @@ const deleteData = async (db, select) => {
                     }
                 ]);
 
-        console.log(id);
         await db.query(`DELETE FROM ${select} WHERE id = ?`, id);
         console.log(`Deleted the selected ${select} from the database`);
         return;

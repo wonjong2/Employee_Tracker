@@ -1,16 +1,12 @@
 const inquirer = require('inquirer');
 
 const updateEmployeeRole = async (db) => {
-    let roleList = [];
-    let employeeList = [];
     try {
         // Create the roleList with data from the role table, it will be used as a 'choices' in inquirer.prompt
-        roleList = await db.query(`SELECT id AS value, title AS name FROM role`);
-        roleList = roleList[0];
+        let [roleList] = await db.query(`SELECT id AS value, title AS name FROM role`);
         // Create the employeeList with data from the employee table, it will be used as a 'choices' in inquirer.prompt
-        employeeList = await db.query(`SELECT id AS value, first_name AS name, last_name FROM employee`);
-        employeeList = employeeList[0];
-        employeeList.forEach((employee) => employee.name = employee.name + ' ' + employee.last_name);
+        let [employeeList] = await db.query(`SELECT id AS value, first_name AS name, last_name FROM employee`);
+        employeeList.forEach((employee) => employee.name = `${employee.name} ${employee.last_name}`);
 
         const {id, role_id} = await inquirer.prompt([
             {
@@ -39,15 +35,12 @@ const updateEmployeeRole = async (db) => {
 }
 
 const updateEmployeeManagers = async (db) => {
-    let employeeList = [];
-    let managerList = [];
     try {
         // Create the employeeList with data from the employee table, it will be used as a 'choices' in inquirer.prompt
-        employeeList = await db.query(`SELECT id AS value, first_name AS name, last_name FROM employee`);
-        employeeList = employeeList[0];
-        employeeList.forEach((employee) => employee.name = employee.name + ' ' + employee.last_name);
+        let [employeeList] = await db.query(`SELECT id AS value, first_name AS name, last_name FROM employee`);
+        employeeList.forEach((employee) => employee.name = `${employee.name} ${employee.last_name}`);
         // Create the managerList with data from the employee table, it will be used as a 'choices' in inquirer.prompt
-        managerList = [{value:null, name:'None'}].concat(employeeList);
+        let managerList = [{value:null, name:'None'}].concat(employeeList);
 
         const {id, manager_id} = await inquirer.prompt([
             {

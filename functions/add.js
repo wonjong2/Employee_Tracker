@@ -21,11 +21,9 @@ const addDepartment = async(db) => {
 }
 
 const addRole = async(db) => {
-    let deptList = [];
     try {
         // Create the deptList with data from the department table, it will be used as a 'choices' in inquirer.prompt
-        deptList = await db.query(`SELECT id AS value, name FROM department`);
-        deptList = deptList[0];
+        let [deptList] = await db.query(`SELECT id AS value, name FROM department`);
 
         const {title, salary, department_id} = await inquirer.prompt([
             {
@@ -57,16 +55,12 @@ const addRole = async(db) => {
 }
 
 const addEmployee = async (db) => {
-    let roleList = [];
-    let employeeList = [];
     try {
         // Create the roleList with data from the role table, it will be used as a 'choices' in inquirer.prompt
-        roleList = await db.query(`SELECT id AS value, title AS name FROM role`);
-        roleList = roleList[0];
+        let [roleList] = await db.query(`SELECT id AS value, title AS name FROM role`);
         // Create the employeeList with data from the employee table, it will be used as a 'choices' in inquirer.prompt
-        employeeList = await db.query(`SELECT id AS value, first_name AS name, last_name FROM employee`);
-        employeeList = employeeList[0];
-        employeeList.forEach((employee) => employee.name = employee.name + ' ' + employee.last_name);
+        let [employeeList] = await db.query(`SELECT id AS value, first_name AS name, last_name FROM employee`);
+        employeeList.forEach((employee) => employee.name = `${employee.name} ${employee.last_name}`);
         // Add 'None' option to the top of the employeeList
         employeeList.unshift({value:null, name: 'None'});
 
