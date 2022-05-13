@@ -26,12 +26,12 @@ function main() {
         {value:(db) => viewData(db, Views.DEPARTMENTS), name:'View All Departments'},
         {value:(db) => viewData(db, Views.ROLES), name:'View All Roles'},
         {value:(db) => viewData(db, Views.EMPLOYEES), name:'View All Employees'},
-        {value:addDepartment, name:'Add A Department'},
-        {value:addRole, name:'Add A Role'},
-        {value:addEmployee, name:'Add An Employee'},
-        {value:updateEmployeeRole, name:'Update An Employee Role'},
-        {value:updateEmployeeManagers, name:'Update An Employee Manager'},
-        {value:viewEmployeesByManager, name:'View Employees by Manager'},
+        {value:(db) => addDepartment(db), name:'Add A Department'},
+        {value:(db) => addRole(db), name:'Add A Role'},
+        {value:(db) => addEmployee(db), name:'Add An Employee'},
+        {value:(db) => updateEmployeeRole(db), name:'Update An Employee Role'},
+        {value:(db) => updateEmployeeManagers(db), name:'Update An Employee Manager'},
+        {value:(db) => viewEmployeesByManager(db), name:'View Employees by Manager'},
     ];
 
     inquirer
