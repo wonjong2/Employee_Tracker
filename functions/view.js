@@ -1,20 +1,23 @@
 const Views = {
-    DEPARTMENTS: "departments",
-    ROLES: "roles",
-    EMPLOYEES: "employee",
+    DEPARTMENTS: "department",
+    ROLES: "role",
+    EMPLOYEE: "employee",
 }
 
 const viewData = async (db, select) => {
     const queries = {
         [Views.DEPARTMENTS]: `SELECT * 
-        FROM department`,
+        FROM department
+        ORDER BY id`,
         [Views.ROLES]: `SELECT role.id, role.title, department.name AS department, role.salary
         FROM role
-        JOIN department ON department.id = role.department_id`,
+        JOIN department ON department.id = role.department_id
+        ORDER BY role.id`,
         [Views.EMPLOYEES]: `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id AS manager
         FROM employee
         JOIN role ON employee.role_id = role.id
-        JOIN department ON role.department_id = department.id`
+        JOIN department ON role.department_id = department.id
+        ORDER BY employee.id`
     };
 
     let data = {};

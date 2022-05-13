@@ -46,7 +46,7 @@ const addRole = async(db) => {
                 pageSize: deptList.length,
             }
         ]);
-        const result = await db.query(`INSERT INTO role(title, salary, department_id) VALUES('${title}', ${salary}, ${department_id})`);
+        await db.query(`INSERT INTO role(title, salary, department_id) VALUES('${title}', ${salary}, ${department_id})`);
         console.log(`Added ${title} to the database`);
         return;
     }
@@ -97,7 +97,7 @@ const addEmployee = async (db) => {
             }]
         )
 
-        const result = await db.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('${first_name}', '${last_name}', ${role_id}, ${manager_id})`);
+        await db.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('${first_name}', '${last_name}', ${role_id}, ${manager_id})`);
         console.log(`Added ${first_name} ${last_name} to the database`);
         return;
     }

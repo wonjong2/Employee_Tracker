@@ -29,7 +29,7 @@ const updateEmployeeRole = async (db) => {
             },
         ]);
 
-        const result = await db.query(`UPDATE employee SET role_id = ? WHERE id = ?`, [role_id, id]);
+        await db.query(`UPDATE employee SET role_id = ? WHERE id = ?`, [role_id, id]);
         console.log(`Updated employee's role`);
     }
     catch {
@@ -66,7 +66,7 @@ const updateEmployeeManagers = async (db) => {
             },
         ]);
 
-        const result = await db.query(`UPDATE employee SET manager_id = ? WHERE id = ?`, [manager_id, id]);
+        await db.query(`UPDATE employee SET manager_id = ? WHERE id = ?`, [manager_id, id]);
         console.log(`Updated employee's manager`);
     }
     catch {
