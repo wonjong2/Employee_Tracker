@@ -1,18 +1,21 @@
-const mysql = require('mysql2/promise');
-const table = require('console.table');
+const Views = {
+    DEPARTMENTS: "departments",
+    ROLES: "roles",
+    EMPLOYEES: "employee",
+}
 
 const viewData = async (db, select) => {
-    const queries = [
-        `SELECT * 
+    const queries = {
+        [Views.DEPARTMENTS]: `SELECT * 
         FROM department`,
-        `SELECT role.id, role.title, department.name AS department, role.salary
+        [Views.ROLES]: `SELECT role.id, role.title, department.name AS department, role.salary
         FROM role
         JOIN department ON department.id = role.department_id`,
-        `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id AS manager
+        [Views.EMPLOYEES]: `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id AS manager
         FROM employee
         JOIN role ON employee.role_id = role.id
         JOIN department ON role.department_id = department.id`
-    ];
+    };
 
     let data = {};
     try {
@@ -20,7 +23,7 @@ const viewData = async (db, select) => {
         data = await db.query(queries[select]);
 
         // Put the manager's name instead of mananger_id into employee.manager to display it
-        if(select === 2){
+        if(select === Views.EMPLOYEES){
             data[0].forEach((employee) => {
                 if(!employee.manager) {
                     return;
@@ -61,4 +64,4 @@ const viewEmployeesByManager = async (db) => {
     }
 }
 
-module.exports = {viewData, viewEmployeesByManager};
+module.exports = {Views, viewData, viewEmployeesByManager};

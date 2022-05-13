@@ -1,7 +1,7 @@
+require('console.table');
 const mysql = require('mysql2/promise');
 const inquirer = require('inquirer');
-const table = require('console.table');
-const {viewData, viewEmployeesByManager} = require('./functions/view')
+const {Views, viewData, viewEmployeesByManager} = require('./functions/view')
 const {addDepartment, addRole, addEmployee} = require('./functions/add');
 const {updateEmployeeRole, updateEmployeeManagers} = require('./functions/update');
 
@@ -23,28 +23,15 @@ mysql.createConnection(
 
 function main() {
     const options = [
-        {value:0, name:'View All Departments'},
-        {value:1, name:'View All Roles'},
-        {value:2, name:'View All Employees'},
-        {value:3, name:'Add A Department'},
-        {value:4, name:'Add A Role'},
-        {value:5, name:'Add An Employee'},
-        {value:6, name:'Update An Employee Role'},
-        {value:7, name:'Update An Employee Manager'},
-        {value:8, name:'View Employees by Manager'},
-    ];
-
-    // Functions to be executed by user's choice
-    const functions = [
-        viewData, 
-        viewData,
-        viewData,
-        addDepartment,
-        addRole,
-        addEmployee,
-        updateEmployeeRole,
-        updateEmployeeManagers,
-        viewEmployeesByManager,
+        {value:(db) => viewData(db, Views.DEPARTMENTS), name:'View All Departments'},
+        {value:(db) => viewData(db, Views.ROLES), name:'View All Roles'},
+        {value:(db) => viewData(db, Views.EMPLOYEES), name:'View All Employees'},
+        {value:addDepartment, name:'Add A Department'},
+        {value:addRole, name:'Add A Role'},
+        {value:addEmployee, name:'Add An Employee'},
+        {value:updateEmployeeRole, name:'Update An Employee Role'},
+        {value:updateEmployeeManagers, name:'Update An Employee Manager'},
+        {value:viewEmployeesByManager, name:'View Employees by Manager'},
     ];
 
     inquirer
@@ -60,7 +47,7 @@ function main() {
             ]
         )
         // All functions to get, add, update or delete data are async functions
-        .then(({option}) => functions[option](db, option))
+        .then(({option}) => option(db))
         // So, Once execution of functions completed, main() called to show option menu to a user
         .then(() => main())
         .catch(err => console.error(err));

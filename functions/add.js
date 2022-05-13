@@ -1,6 +1,4 @@
-const mysql = require('mysql2/promise');
 const inquirer = require('inquirer');
-const table = require('console.table');
 
 const addDepartment = async(db) => {
     try {
