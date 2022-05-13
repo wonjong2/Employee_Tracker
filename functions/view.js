@@ -64,4 +64,21 @@ const viewEmployeesByManager = async (db) => {
     }
 }
 
-module.exports = {Views, viewData, viewEmployeesByManager};
+const viewEmployeesByDept = async (db) => {
+    try {
+        let employeeList = await db.query(`SELECT department.name AS department, employee.id, employee.first_name, employee.last_name 
+        FROM employee
+        JOIN role ON role.id = employee.role_id
+        JOIN department ON department.id = role.department_id
+        ORDER BY department`);
+        employeeList = employeeList[0];
+
+        console.table(employeeList);
+    }
+    catch {
+        console.error(`Error in Reading DB`);
+        return;
+    }
+}
+
+module.exports = {Views, viewData, viewEmployeesByManager, viewEmployeesByDept};

@@ -1,7 +1,7 @@
 require('console.table');
 const mysql = require('mysql2/promise');
 const inquirer = require('inquirer');
-const {Views, viewData, viewEmployeesByManager} = require('./functions/view')
+const {Views, viewData, viewEmployeesByManager, viewEmployeesByDept} = require('./functions/view')
 const {addDepartment, addRole, addEmployee} = require('./functions/add');
 const {updateEmployeeRole, updateEmployeeManagers} = require('./functions/update');
 
@@ -32,6 +32,7 @@ function main() {
         {value:(db) => updateEmployeeRole(db), name:'Update An Employee Role'},
         {value:(db) => updateEmployeeManagers(db), name:'Update An Employee Manager'},
         {value:(db) => viewEmployeesByManager(db), name:'View Employees by Manager'},
+        {value:(db) => viewEmployeesByDept(db), name:'View Employees by Department'},
     ];
 
     inquirer
