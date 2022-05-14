@@ -15,8 +15,8 @@ const viewData = async (db, select) => {
         ORDER BY role.id`,
         [Views.EMPLOYEES]: `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id AS manager
         FROM employee
-        JOIN role ON employee.role_id = role.id
-        JOIN department ON role.department_id = department.id
+        LEFT JOIN role ON employee.role_id = role.id
+        LEFT JOIN department ON role.department_id = department.id
         ORDER BY employee.id`
     };
 

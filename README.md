@@ -1,17 +1,20 @@
 # Employee Tracker
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Description
 
-Discription : 
+Discription :
 This application allows a user to view and manage the departments, roles, and employees in the user's company
+
 - Use node.js to implement this application
-- Use 'mysql2' to connect to MySQL database and perform queries 
+- Use 'mysql2' to connect to MySQL database and perform queries
 - Use 'inquirer' to interact with the user via the command line
 - Use 'dotevn' to hide private information from public place
 - Use 'console.table' to print MySQL rows to the console
 
 ## Table of Contents
+
 1. [Installation](#installation)
 2. [Usage](#usage)
 3. [License](#license)
@@ -31,8 +34,8 @@ Please refer to the image below.
 
 ## Usage
 
-1. When a user starts the application, the following options are shown: view all departments, view all roles, view all employees, add a department, add a role, add an employee, update an employee role, update an employee manager, view employees by manager, view employees by department, delete a department, delete a role, delete an employee,  and view the total utilized budget of a department
-![options](./images/options.png)
+1. When a user starts the application, the following options are shown: view all departments, view all roles, view all employees, add a department, add a role, add an employee, update an employee role, update an employee manager, view employees by manager, view employees by department, delete a department, delete a role, delete an employee, and view the total utilized budget of a department
+   ![options](./images/options.png)
 
 2. When a user chooses to view all departments, a user is presented with a formatted table showing department names and department ids
 
@@ -58,6 +61,7 @@ Please refer to the image below.
 
 `Please refer to the walkthrough video`
 
+https://watch.screencastify.com/v/ne5wToOqJs6Fyh8QNqez
 
 ## License
 
