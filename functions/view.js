@@ -83,4 +83,20 @@ const viewEmployeesByDept = async (db) => {
     }
 }
 
-module.exports = {Views, viewData, viewEmployeesByManager, viewEmployeesByDept};
+const viewUtilizedBudget = async (db) => {
+    try {
+        let [budgetList] = await db.query(`SELECT SUM(role.salary) AS Total_Utilized_Budget, department.name AS department 
+        FROM employee
+        JOIN role ON role.id = employee.role_id
+        JOIN department ON department.id = role.department_id
+        GROUP BY department.name`);
+
+        console.table(budgetList);
+    }
+    catch {
+        console.error(`Error in Reading DB`);
+        return;
+    }    
+}
+
+module.exports = {Views, viewData, viewEmployeesByManager, viewEmployeesByDept, viewUtilizedBudget};

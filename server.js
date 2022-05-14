@@ -1,7 +1,7 @@
 require('console.table');
 const mysql = require('mysql2/promise');
 const inquirer = require('inquirer');
-const {Views, viewData, viewEmployeesByManager, viewEmployeesByDept} = require('./functions/view')
+const {Views, viewData, viewEmployeesByManager, viewEmployeesByDept, viewUtilizedBudget} = require('./functions/view')
 const {addDepartment, addRole, addEmployee} = require('./functions/add');
 const {updateEmployeeRole, updateEmployeeManagers} = require('./functions/update');
 const {Delete, deleteData} = require('./functions/delete');
@@ -37,6 +37,7 @@ function main() {
         {value:(db) => deleteData(db, Delete.DEPARTMENT), name:'Delete A Department'},
         {value:(db) => deleteData(db, Delete.ROLE), name:'Delete A Role'},
         {value:(db) => deleteData(db, Delete.EMPLOYEE), name:'Delete An Employee'},
+        {value:(db) => viewUtilizedBudget(db), name:'View The Total Utilized Budget Of A Department'},
     ];
 
     inquirer
